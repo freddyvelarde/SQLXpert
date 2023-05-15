@@ -39,6 +39,22 @@ func (db DbConfig) connection() (*sql.DB, error) {
 	return database, nil
 }
 
+func (db DbConfig) CreateDataBase(newDb string) string {
+	database, err := db.connection()
+	if err != nil {
+		log.Fatal("Failed to create database")
+	}
+
+	// Create the new database
+	createDBStatement := fmt.Sprintf("CREATE DATABASE %s", newDb)
+	_, err = database.Exec(createDBStatement)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return fmt.Sprintf("Database '%s' created successfully!\n", newDb)
+}
+
 func (db DbConfig) Querie(query string) []User {
 	database, err := db.connection()
 	if err != nil {

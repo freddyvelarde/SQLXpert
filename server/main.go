@@ -14,5 +14,11 @@ func main() {
 		})
 	})
 
+	app.GET("/create", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": dbConfig.CreateDataBase("eli"),
+		})
+	})
+
 	app.Run()
 }
