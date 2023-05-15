@@ -8,7 +8,8 @@ import (
 
 func createDataBase(ctx *gin.Context) {
 	data := struct {
-		DbName string `json:"dbname"`
+		Name     string `json:"name"`
+		Password string `json:"password"`
 	}{}
 
 	if err := ctx.ShouldBindJSON(&data); err != nil {
@@ -16,7 +17,7 @@ func createDataBase(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"dbname": data.DbName})
+	ctx.JSON(http.StatusAccepted, gin.H{"dbname": data.Name, "password": data.Password})
 }
 
 func mainRoute(ctx *gin.Context) {
