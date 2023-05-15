@@ -43,20 +43,38 @@ func connection(config DBConfig) (*sql.DB, error) {
 	return db, nil
 }
 
-func CreateNewDatabase(newDb string, config DBConfig) string {
+type CreateDBResponse struct {
+	Error     error  `json:"error"`
+	DBCreated bool   `json:"dbCreated"`
+	Message   string `json:"message"`
+}
+
+func CreateNewDatabase(newDb string, config DBConfig) CreateDBResponse {
+	response := CreateDBResponse{
+		Error:     nil,
+		DBCreated: false,
+		Message:   "",
+	}
+
 	db, err := connection(config)
 	if err != nil {
-		return "Failed to create db"
+		response.Error = err
+		response.Message = "Failed to create database"
+		return response
 	}
 
 	// Create the new db
 	createDBStatement := fmt.Sprintf("CREATE DATABASE %s;", newDb)
 	_, err = db.Exec(createDBStatement)
 	if err != nil {
-		log.Fatal(err)
+		response.Error = err
+		response.Message = "Failed to create database"
+		return response
 	}
 
-	return fmt.Sprintf("Database: '%s' was created successfully!", newDb)
+	response.Message = fmt.Sprintf("Database: '%s' was created successfully!", newDb)
+	response.DBCreated = true
+	return response
 }
 
 func Querie(query string, config DBConfig) []User {

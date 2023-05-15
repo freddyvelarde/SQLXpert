@@ -32,7 +32,7 @@ func createDataBase(ctx *gin.Context) {
 
 	res := config.CreateNewDatabase(data.NewDB, dbConfig)
 
-	ctx.JSON(http.StatusAccepted, gin.H{"message": res})
+	ctx.JSON(http.StatusAccepted, res)
 }
 
 func mainRoute(ctx *gin.Context) {
