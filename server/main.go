@@ -7,10 +7,11 @@ import (
 
 func main() {
 	app := gin.Default()
-	dbConfig := config.DbConfig{Host: "localhost", Dbname: "gotest", Password: "admin", Port: 5432, User: "admin"}
+	dbConfig := config.DbConfig{Host: "localhost", Password: "admin", Port: 5432, User: "admin"}
 	app.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": dbConfig.Querie("create table \"user\" (id serial primary key, name text, email text not null, password text);"),
+			// "message": dbConfig.Querie("create table \"user\" (id serial primary key, name text, email text not null, password text);", "gotest"),
+			"message": dbConfig.Querie("select * from \"user\";", "gotest"),
 		})
 	})
 
