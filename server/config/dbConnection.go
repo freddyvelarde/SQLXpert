@@ -77,28 +77,71 @@ func CreateNewDatabase(newDb string, config DBConfig) CreateDBResponse {
 	return response
 }
 
-func Querie(query string, config DBConfig) []User {
-	// TODO: refactor this code, cause this code it was only for test database connection
-	db, err := connection(config)
-	if err != nil {
-		log.Fatal("Failed to connect to the db", err)
+func Queries(query string, config DBConfig) (interface{}, error) {
+	if !isQueryExpectedToReturnRows(query) {
+		db, err := connection(config)
+		if err != nil {
+			return "", fmt.Errorf("failed to connect to the database: %w", err)
+		}
+		defer db.Close()
+
+		result, err := db.Exec(query)
+		if err != nil {
+			return "", fmt.Errorf("failed to execute the query: %w", err)
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			return "", fmt.Errorf("failed to retrieve the number of rows affected: %w", err)
+		}
+
+		response := fmt.Sprintf("%s %d", query, rowsAffected)
+		return response, nil
 	}
 
-	rows, err := db.Query(query)
-	db.QueryRow(query).Scan()
+	db, err := connection(config)
 	if err != nil {
-		log.Fatal("Failed to execute the query:", err)
+		return nil, fmt.Errorf("failed to connect to the database: %w", err)
+	}
+	defer db.Close()
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute the query: %w", err)
 	}
 	defer rows.Close()
 
-	users := []User{}
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve column names: %w", err)
+	}
+
+	data := []map[string]interface{}{}
 
 	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password); err != nil {
-			log.Println("Failed to scan row:", err)
+		values := make([]interface{}, len(columns))
+		valuePtrs := make([]interface{}, len(columns))
+
+		for i := range columns {
+			valuePtrs[i] = &values[i]
 		}
-		users = append(users, user)
+
+		if err := rows.Scan(valuePtrs...); err != nil {
+			log.Println("Failed to scan row:", err)
+			continue
+		}
+
+		entry := make(map[string]interface{})
+		for i, column := range columns {
+			entry[column] = values[i]
+		}
+
+		data = append(data, entry)
 	}
-	return users
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate over rows: %w", err)
+	}
+
+	return data, nil
 }

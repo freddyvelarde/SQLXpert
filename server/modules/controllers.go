@@ -35,6 +35,38 @@ func createDataBase(ctx *gin.Context) {
 	ctx.JSON(http.StatusAccepted, res)
 }
 
+func makeQueries(ctx *gin.Context) {
+	body := struct {
+		DbName   string `json:"dbName"`
+		Password string `json:"password"`
+		User     string `json:"user"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+		Query    string `json:"query"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dbConfig := config.DBConfig{
+		Port:     body.Port,
+		User:     body.User,
+		Password: body.Password,
+		DbName:   body.DbName,
+		Host:     body.Host,
+	}
+
+	res, err := config.Queries(body.Query, dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusAccepted, gin.H{"response": res})
+}
+
 func mainRoute(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"message": "hello world from modularized golang server",
