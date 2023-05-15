@@ -15,56 +15,59 @@ type User struct {
 	Password string
 }
 
-type DbConfig struct {
+type DBConfig struct {
 	Host     string
 	User     string
 	Password string
 	Port     int
+	DbName   string
 }
 
-func (db DbConfig) connection(dbName string) (*sql.DB, error) {
+func connection(config DBConfig) (*sql.DB, error) {
 	connStr := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		db.Host, db.Port, db.User, db.Password, dbName,
+		config.Host, config.Port, config.User, config.Password, config.DbName,
 	)
-	database, err := sql.Open("postgres", connStr)
+
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
-	err = database.Ping()
+	err = db.Ping()
 
 	if err != nil {
-		database.Close()
+		db.Close()
 		return nil, err
 	}
 
-	return database, nil
+	return db, nil
 }
 
-func (db DbConfig) CreateDataBase(newDb string) string {
-	database, err := db.connection("postgres")
+func CreateNewDatabase(newDb string, config DBConfig) string {
+	db, err := connection(config)
 	if err != nil {
-		log.Fatal("Failed to create database")
+		log.Fatal("Failed to create db")
 	}
 
-	// Create the new database
-	createDBStatement := fmt.Sprintf("CREATE DATABASE %s", newDb)
-	_, err = database.Exec(createDBStatement)
+	// Create the new db
+	createDBStatement := fmt.Sprintf("CREATE db %s", newDb)
+	_, err = db.Exec(createDBStatement)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return fmt.Sprintf("Database '%s' created successfully!\n", newDb)
+	return fmt.Sprintf("db '%s' created successfully!\n", newDb)
 }
 
-func (db DbConfig) Querie(query string, dbName string) []User {
-	database, err := db.connection(dbName)
+func Querie(query string, config DBConfig) []User {
+	// TODO: refactor this code, cause this code it was only for test database connection
+	db, err := connection(config)
 	if err != nil {
-		log.Fatal("Failed to connect to the database", err)
+		log.Fatal("Failed to connect to the db", err)
 	}
 
-	rows, err := database.Query(query)
-	database.QueryRow(query).Scan()
+	rows, err := db.Query(query)
+	db.QueryRow(query).Scan()
 	if err != nil {
 		log.Fatal("Failed to execute the query:", err)
 	}
