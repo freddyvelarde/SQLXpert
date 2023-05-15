@@ -46,17 +46,17 @@ func connection(config DBConfig) (*sql.DB, error) {
 func CreateNewDatabase(newDb string, config DBConfig) string {
 	db, err := connection(config)
 	if err != nil {
-		log.Fatal("Failed to create db")
+		return "Failed to create db"
 	}
 
 	// Create the new db
-	createDBStatement := fmt.Sprintf("CREATE db %s", newDb)
+	createDBStatement := fmt.Sprintf("CREATE DATABASE %s;", newDb)
 	_, err = db.Exec(createDBStatement)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return fmt.Sprintf("db '%s' created successfully!\n", newDb)
+	return fmt.Sprintf("Database: '%s' was created successfully!", newDb)
 }
 
 func Querie(query string, config DBConfig) []User {

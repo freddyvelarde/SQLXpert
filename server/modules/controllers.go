@@ -3,13 +3,18 @@ package modules
 import (
 	"net/http"
 
+	"github.com/freddyvelarde/SQLXpert/config"
 	"github.com/gin-gonic/gin"
 )
 
 func createDataBase(ctx *gin.Context) {
 	data := struct {
-		Name     string `json:"name"`
+		DbName   string `json:"dbName"`
 		Password string `json:"password"`
+		User     string `json:"user"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+		NewDB    string `json:"newDB"`
 	}{}
 
 	if err := ctx.ShouldBindJSON(&data); err != nil {
@@ -17,7 +22,17 @@ func createDataBase(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"dbname": data.Name, "password": data.Password})
+	var dbConfig config.DBConfig
+
+	dbConfig.Port = data.Port
+	dbConfig.User = data.User
+	dbConfig.Password = data.Password
+	dbConfig.DbName = data.DbName
+	dbConfig.Host = data.Host
+
+	res := config.CreateNewDatabase(data.NewDB, dbConfig)
+
+	ctx.JSON(http.StatusAccepted, gin.H{"message": res})
 }
 
 func mainRoute(ctx *gin.Context) {
