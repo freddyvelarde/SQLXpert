@@ -58,13 +58,10 @@ func makeQueries(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	res, err := config.Queries(body.Query, dbConfig)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	data := config.Queries(body.Query, dbConfig)
+	columns := config.Queries(config.GetTheColumns(body.Query), dbConfig)
 
-	ctx.JSON(http.StatusAccepted, gin.H{"response": res})
+	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
 }
 
 func mainRoute(ctx *gin.Context) {
