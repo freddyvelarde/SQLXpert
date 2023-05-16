@@ -80,6 +80,8 @@ func CreateNewDatabase(newDb string, config DBConfig) CreateDBResponse {
 func Queries(query string, config DBConfig) (interface{}, error) {
 	if !isQueryExpectedToReturnRows(query) {
 		db, err := connection(config)
+		// TODO: those errors instead of printing it in the terminal, send to the user
+		// as a http response
 		if err != nil {
 			return "", fmt.Errorf("failed to connect to the database: %w", err)
 		}
