@@ -1,5 +1,5 @@
 package main
 
 func main() {
-	app().Run()
+	app().Run(":7676")
 }

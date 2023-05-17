@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  server:
+    container_name: gin-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "7676:7676"
+    environment:
+      # GIN_MODE: release
+      PORT: 7676
