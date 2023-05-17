@@ -11,3 +11,16 @@ services:
     environment:
       # GIN_MODE: release
       PORT: 7676
+
+  web-client:
+    container_name: nextjs
+    build:
+      context: ./web-client
+      dockerfile: Dockerfile
+    ports:
+      - "7677:5173"
+    environment:
+      PORT: 5173
+    volumes:
+      - ./web-client:/app
+    command: sh -c 'npm run dev --host'
