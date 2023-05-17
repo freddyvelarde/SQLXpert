@@ -8,6 +8,7 @@ import (
 func app() *gin.Engine {
 	app := gin.Default()
 
+	gin.SetMode(gin.ReleaseMode)
 	modules.Router(app)
 
 	return app
