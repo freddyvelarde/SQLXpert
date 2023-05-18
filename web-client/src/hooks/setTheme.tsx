@@ -12,5 +12,9 @@ export default function useTheme() {
     dispatch(setTheme(!theme));
   };
 
-  return { colors: theme ? colors.light : colors.dark, switchTheme };
+  return {
+    colors: theme ? colors.light : colors.dark,
+    switchTheme,
+    themeState: theme,
+  };
 }
