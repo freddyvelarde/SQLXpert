@@ -1,0 +1,18 @@
+{
+  "light": {
+    "background": "#CBCBCD",
+    "foreground": "#DDDEE0",
+    "button": "#276185",
+    "text": "#05070A",
+    "title": "#3E5353",
+    "contraBtn": "#CC8460"
+  },
+  "dark": {
+    "background": "#15162D",
+    "foreground": "#222539",
+    "button": "#5391E4",
+    "text": "#D0CCDF",
+    "title": "#793CA5",
+    "contraBtn": "#4B40B8"
+  }
+}
