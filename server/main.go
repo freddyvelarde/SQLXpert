@@ -1,12 +1,12 @@
 package main
 
-import "os"
+// import "os"
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "7676"
-	}
+	// port := os.Getenv("PORT")
+	// if port == "" {
+	//   port = "7676"
+	// }
 
-	app().Run(":" + port)
+	app().Run(":7676")
 }

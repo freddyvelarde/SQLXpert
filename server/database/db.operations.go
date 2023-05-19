@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -23,6 +24,10 @@ type DBConfig struct {
 }
 
 func connection(config DBConfig) (*sql.DB, error) {
+	if strings.ToLower(config.Host) == "localhost" {
+		config.Host = "172.19.0.1"
+	}
+
 	connStr := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		config.Host, config.Port, config.User, config.Password, config.DbName,

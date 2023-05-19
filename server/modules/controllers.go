@@ -59,9 +59,17 @@ func makeQueries(ctx *gin.Context) {
 	}
 
 	data := database.Queries(body.Query, dbConfig)
-	columns := database.GetAllColumnNamesfromTable(dbConfig)
+	// columns := database.GetAllColumnNamesfromTable(dbConfig)
 
-	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
+	// ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
+	ctx.JSON(http.StatusAccepted, data)
+}
+
+func getLocalIpAddress(ctx *gin.Context) {
+	ip := ctx.ClientIP()
+	ctx.JSON(200, gin.H{
+		"ip": ip,
+	})
 }
 
 func getAllDatabases(ctx *gin.Context) {
