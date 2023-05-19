@@ -3,7 +3,7 @@ package modules
 import (
 	"net/http"
 
-	"github.com/freddyvelarde/SQLXpert/config"
+	"github.com/freddyvelarde/SQLXpert/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +22,7 @@ func createDataBase(ctx *gin.Context) {
 		return
 	}
 
-	var dbConfig config.DBConfig
+	var dbConfig database.DBConfig
 
 	dbConfig.Port = data.Port
 	dbConfig.User = data.User
@@ -30,7 +30,7 @@ func createDataBase(ctx *gin.Context) {
 	dbConfig.DbName = data.DbName
 	dbConfig.Host = data.Host
 
-	res := config.CreateNewDatabase(data.NewDB, dbConfig)
+	res := database.CreateNewDatabase(data.NewDB, dbConfig)
 
 	ctx.JSON(http.StatusAccepted, res)
 }
@@ -50,7 +50,7 @@ func makeQueries(ctx *gin.Context) {
 		return
 	}
 
-	dbConfig := config.DBConfig{
+	dbConfig := database.DBConfig{
 		Port:     body.Port,
 		User:     body.User,
 		Password: body.Password,
@@ -58,10 +58,36 @@ func makeQueries(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	data := config.Queries(body.Query, dbConfig)
-	// columns := config.Queries(config.GetTheColumns(body.Query), dbConfig)
+	data := database.Queries(body.Query, dbConfig)
+	columns := database.GetAllColumnNamesfromTable(dbConfig)
 
-	ctx.JSON(http.StatusAccepted, data)
+	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
+}
+
+func getAllDatabases(ctx *gin.Context) {
+	body := struct {
+		DbName   string `json:"dbName"`
+		Password string `json:"password"`
+		User     string `json:"user"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	dbConfig := database.DBConfig{
+		Port:     body.Port,
+		User:     body.User,
+		Password: body.Password,
+		DbName:   body.DbName,
+		Host:     body.Host,
+	}
+
+	res := database.GetAllDatabases(dbConfig)
+
+	ctx.JSON(http.StatusAccepted, res)
 }
 
 func mainRoute(ctx *gin.Context) {

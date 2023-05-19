@@ -1,4 +1,4 @@
-package config
+package database
 
 import (
 	"database/sql"
@@ -77,11 +77,50 @@ func CreateNewDatabase(newDb string, config DBConfig) CreateDBResponse {
 }
 
 func Queries(query string, config DBConfig) QueryResponse {
-	if !isQueryExpectedToReturnRows(query) {
-		return executeQuery(query, config)
+	if isQueryExpectedToReturnRows(query) {
+		data := getDataFromDB(query, config)
+		return data
 	}
 
-	// columns := getDataFromDB(getTheTableName(query), config)
+	return executeQuery(query, config)
+}
+
+func GetAllDatabases(config DBConfig) DatabaseNames {
+	query := "SELECT datname::text FROM pg_catalog.pg_database WHERE datistemplate = false;"
+
 	data := getDataFromDB(query, config)
-	return data
+
+	databases := []string{}
+
+	for _, value := range data.Data.([]map[string]interface{}) {
+		db, ok := value["datname"].(string)
+		if !ok {
+			continue
+		}
+		databases = append(databases, db)
+	}
+	return DatabaseNames{
+		Error:     false,
+		Databases: databases,
+	}
+}
+
+func GetAllColumnNamesfromTable(config DBConfig) ColumnNames {
+	query := "SELECT tablename::text FROM pg_catalog.pg_tables WHERE schemaname = 'public';"
+
+	data := getDataFromDB(query, config)
+
+	columns := []string{}
+
+	for _, value := range data.Data.([]map[string]interface{}) {
+		column, ok := value["tablename"].(string)
+		if !ok {
+			continue
+		}
+		columns = append(columns, column)
+	}
+	return ColumnNames{
+		Error:   false,
+		Columns: columns,
+	}
 }

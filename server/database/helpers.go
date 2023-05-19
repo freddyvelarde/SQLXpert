@@ -1,4 +1,4 @@
-package config
+package database
 
 import (
 	"fmt"
@@ -9,6 +9,18 @@ type QueryResponse struct {
 	Message string      `json:"message"`
 	Error   bool        `json:"error"`
 	Data    interface{} `json:"data"`
+}
+
+type ColumnNames struct {
+	Message string      `json:"message"`
+	Error   bool        `json:"error"`
+	Columns interface{} `json:"columns"`
+}
+
+type DatabaseNames struct {
+	Message   string   `json:"message"`
+	Error     bool     `json:"error"`
+	Databases []string `json:"databases"`
 }
 
 func isQueryExpectedToReturnRows(query string) bool {
@@ -106,7 +118,7 @@ func getDataFromDB(query string, config DBConfig) QueryResponse {
 	return response
 }
 
-func GetTheColumns(query string) string {
+func GetColumnNamesFromTable(query string) string {
 	words := strings.Fields(strings.ToLower(query))
 
 	var tableName string
