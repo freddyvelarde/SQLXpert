@@ -3,23 +3,24 @@ import useTheme from "./hooks/setTheme";
 import Connection from "./views/Connection";
 
 function App() {
-  const theme = useTheme();
+  const { themeState, storeThemeIntoLocalStorage, colors, switchTheme } =
+    useTheme();
   useEffect(() => {
     const data = localStorage.getItem("theme");
     if (data !== null) {
-      theme.storeThemeIntoLocalStorage(JSON.parse(data));
+      storeThemeIntoLocalStorage(JSON.parse(data));
     }
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("theme", JSON.stringify(theme.themeState));
-  }, [theme]);
+    localStorage.setItem("theme", JSON.stringify(themeState));
+  }, [themeState]);
 
   return (
     <>
-      <button onClick={() => console.log(theme.colors)}>Get Colors</button>
-      <button onClick={theme.switchTheme}>Switch Theme</button>
+      <button onClick={() => console.log(colors)}>Get Colors</button>
+      <button onClick={switchTheme}>Switch Theme</button>
       <Connection />
     </>
   );
