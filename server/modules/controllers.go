@@ -59,9 +59,9 @@ func makeQueries(ctx *gin.Context) {
 	}
 
 	data := config.Queries(body.Query, dbConfig)
-	columns := config.Queries(config.GetTheColumns(body.Query), dbConfig)
+	// columns := config.Queries(config.GetTheColumns(body.Query), dbConfig)
 
-	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
+	ctx.JSON(http.StatusAccepted, data)
 }
 
 func mainRoute(ctx *gin.Context) {

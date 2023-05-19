@@ -1,5 +1,12 @@
 package main
 
+import "os"
+
 func main() {
-	app().Run(":7676")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "7676"
+	}
+
+	app().Run(":" + port)
 }
