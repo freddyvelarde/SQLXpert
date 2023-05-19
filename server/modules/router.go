@@ -8,4 +8,5 @@ func Router(app *gin.Engine) {
 	app.GET("/", mainRoute)
 	app.POST("/create", createDataBase)
 	app.POST("/query", makeQueries)
+	app.POST("/databases", getAllDatabases)
 }
