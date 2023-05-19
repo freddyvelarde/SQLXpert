@@ -12,9 +12,14 @@ export default function useTheme() {
     dispatch(setTheme(!theme));
   };
 
+  const storeThemeIntoLocalStorage = (themeS: boolean) => {
+    dispatch(setTheme(themeS));
+  };
+
   return {
     colors: theme ? colors.light : colors.dark,
     switchTheme,
     themeState: theme,
+    storeThemeIntoLocalStorage,
   };
 }
