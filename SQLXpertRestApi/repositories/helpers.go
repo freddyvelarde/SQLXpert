@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/freddyvelarde/SQLXpert/database"
 	"github.com/freddyvelarde/SQLXpert/utils"
 )
 
@@ -38,7 +39,7 @@ func executeQuery(query string, config utils.DBConfig) QueryResponse {
 		Error:   true,
 	}
 
-	db, err := Connection(config)
+	db, err := database.Connection(config)
 	if err != nil {
 		response.Message = fmt.Sprintf("failed to connect to the Database: %s", err)
 		return response
@@ -68,7 +69,7 @@ func getDataFromDB(query string, config utils.DBConfig) QueryResponse {
 		Error:   true,
 	}
 
-	db, err := Connection(config)
+	db, err := database.Connection(config)
 	if err != nil {
 		response.Message = fmt.Sprintf("failed to connect to the Database: %s", err)
 		return response

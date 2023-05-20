@@ -31,9 +31,12 @@ func createDataBase(ctx *gin.Context) {
 	dbConfig.DbName = data.DbName
 	dbConfig.Host = data.Host
 
-	res := repositories.CreateNewDatabase(data.NewDB, dbConfig)
+	response, err := repositories.CreateNewDatabase(data.NewDB, dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusConflict, err)
+	}
 
-	ctx.JSON(http.StatusAccepted, res)
+	ctx.JSON(http.StatusAccepted, gin.H{"message": response})
 }
 
 func makeQueries(ctx *gin.Context) {
@@ -66,31 +69,31 @@ func makeQueries(ctx *gin.Context) {
 	// ctx.JSON(http.StatusAccepted, data)
 }
 
-func databaseConnection(ctx *gin.Context) {
-	body := struct {
-		DbName   string `json:"dbName"`
-		Password string `json:"password"`
-		User     string `json:"user"`
-		Host     string `json:"host"`
-		Port     int    `json:"port"`
-	}{}
-
-	dbConfig := utils.DBConfig{
-		Port:     body.Port,
-		User:     body.User,
-		Password: body.Password,
-		DbName:   body.DbName,
-		Host:     body.Host,
-	}
-
-	_, err := repositories.Connection(dbConfig)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
-		return
-	}
-
-	ctx.JSON(http.StatusAccepted, gin.H{"message": "Database connected successfully"})
-}
+// func databaseConnection(ctx *gin.Context) {
+//   body := struct {
+//     DbName   string `json:"dbName"`
+//     Password string `json:"password"`
+//     User     string `json:"user"`
+//     Host     string `json:"host"`
+//     Port     int    `json:"port"`
+//   }{}
+//
+//   dbConfig := utils.DBConfig{
+//     Port:     body.Port,
+//     User:     body.User,
+//     Password: body.Password,
+//     DbName:   body.DbName,
+//     Host:     body.Host,
+//   }
+//
+//   _, err := repositories.Connection(dbConfig)
+//   if err != nil {
+//     ctx.JSON(http.StatusBadRequest, err)
+//     return
+//   }
+//
+//   ctx.JSON(http.StatusAccepted, gin.H{"message": "Database connected successfully"})
+// }
 
 func getAllDatabases(ctx *gin.Context) {
 	body := struct {

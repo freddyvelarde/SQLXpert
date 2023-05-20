@@ -1,70 +1,28 @@
 package repositories
 
 import (
-	"database/sql"
 	"fmt"
-	"strings"
 
+	"github.com/freddyvelarde/SQLXpert/database"
 	"github.com/freddyvelarde/SQLXpert/utils"
 	_ "github.com/lib/pq"
 )
 
-func Connection(config utils.DBConfig) (*sql.DB, error) {
-	if strings.ToLower(config.Host) == "localhost" {
-		config.Host = "172.19.0.1"
-	}
-
-	connStr := fmt.Sprintf(
-		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		config.Host, config.Port, config.User, config.Password, config.DbName,
-	)
-
-	db, err := sql.Open("postgres", connStr)
+func CreateNewDatabase(newDb string, config utils.DBConfig) (string, error) {
+	db, err := database.Connection(config)
 	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-
-	if err != nil {
-		db.Close()
-		return nil, err
+		return "", nil
 	}
 
-	return db, nil
-}
-
-type CreateDBResponse struct {
-	Error     error  `json:"error"`
-	DBCreated bool   `json:"dbCreated"`
-	Message   string `json:"message"`
-}
-
-func CreateNewDatabase(newDb string, config utils.DBConfig) CreateDBResponse {
-	response := CreateDBResponse{
-		Error:     nil,
-		DBCreated: false,
-		Message:   "",
-	}
-
-	db, err := Connection(config)
-	if err != nil {
-		response.Error = err
-		response.Message = "Failed to create database"
-		return response
-	}
-
-	// Create the new db
 	createDBStatement := fmt.Sprintf("CREATE DATABASE %s;", newDb)
+
 	_, err = db.Exec(createDBStatement)
+
 	if err != nil {
-		response.Error = err
-		response.Message = "Failed to create database"
-		return response
+		return "", nil
 	}
 
-	response.Message = fmt.Sprintf("Database: '%s' was created successfully!", newDb)
-	response.DBCreated = true
-	return response
+	return fmt.Sprintf("Database: '%s' was created successfully!", newDb), nil
 }
 
 func Queries(query string, config utils.DBConfig) QueryResponse {
