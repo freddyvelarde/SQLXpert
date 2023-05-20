@@ -2,9 +2,21 @@ interface InputProps {
   type: string;
   placeholder: string;
   label: string;
+  state: string | number;
+  setState: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Input({ type, placeholder, label }: InputProps) {
+export default function Input({
+  type,
+  placeholder,
+  label,
+  setState,
+  state,
+}: InputProps) {
+  const handleOnChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setState(e.target.value);
+  };
+
   return (
     <div>
       <label htmlFor={"formId-" + placeholder}>
@@ -12,6 +24,8 @@ export default function Input({ type, placeholder, label }: InputProps) {
         <input
           id={"formId-" + placeholder}
           type={type}
+          value={state}
+          onChange={handleOnChangeEvent}
           placeholder={placeholder}
         />
       </label>

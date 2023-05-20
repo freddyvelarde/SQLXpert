@@ -3,8 +3,7 @@ import useTheme from "./hooks/setTheme";
 import Connection from "./views/Connection";
 
 function App() {
-  const { themeState, storeThemeIntoLocalStorage, colors, switchTheme } =
-    useTheme();
+  const { themeState, storeThemeIntoLocalStorage } = useTheme();
   useEffect(() => {
     const data = localStorage.getItem("theme");
     if (data !== null) {
@@ -19,8 +18,6 @@ function App() {
 
   return (
     <>
-      <button onClick={() => console.log(colors)}>Get Colors</button>
-      <button onClick={switchTheme}>Switch Theme</button>
       <Connection />
     </>
   );
