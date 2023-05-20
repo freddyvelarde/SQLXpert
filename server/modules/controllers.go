@@ -59,17 +59,36 @@ func makeQueries(ctx *gin.Context) {
 	}
 
 	data := database.Queries(body.Query, dbConfig)
-	// columns := database.GetAllColumnNamesfromTable(dbConfig)
+	columns := database.GetAllColumnNamesfromTable(dbConfig)
 
-	// ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
-	ctx.JSON(http.StatusAccepted, data)
+	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
+	// ctx.JSON(http.StatusAccepted, data)
 }
 
-func getLocalIpAddress(ctx *gin.Context) {
-	ip := ctx.ClientIP()
-	ctx.JSON(200, gin.H{
-		"ip": ip,
-	})
+func databaseConnection(ctx *gin.Context) {
+	body := struct {
+		DbName   string `json:"dbName"`
+		Password string `json:"password"`
+		User     string `json:"user"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+	}{}
+
+	dbConfig := database.DBConfig{
+		Port:     body.Port,
+		User:     body.User,
+		Password: body.Password,
+		DbName:   body.DbName,
+		Host:     body.Host,
+	}
+
+	_, err := database.Connection(dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	ctx.JSON(http.StatusAccepted, gin.H{"message": "Database connected successfully"})
 }
 
 func getAllDatabases(ctx *gin.Context) {

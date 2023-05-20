@@ -36,7 +36,7 @@ func executeQuery(query string, config DBConfig) QueryResponse {
 		Error:   true,
 	}
 
-	db, err := connection(config)
+	db, err := Connection(config)
 	if err != nil {
 		response.Message = fmt.Sprintf("failed to connect to the Database: %s", err)
 		return response
@@ -66,7 +66,7 @@ func getDataFromDB(query string, config DBConfig) QueryResponse {
 		Error:   true,
 	}
 
-	db, err := connection(config)
+	db, err := Connection(config)
 	if err != nil {
 		response.Message = fmt.Sprintf("failed to connect to the Database: %s", err)
 		return response

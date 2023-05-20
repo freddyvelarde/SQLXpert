@@ -23,7 +23,7 @@ type DBConfig struct {
 	DbName   string
 }
 
-func connection(config DBConfig) (*sql.DB, error) {
+func Connection(config DBConfig) (*sql.DB, error) {
 	if strings.ToLower(config.Host) == "localhost" {
 		config.Host = "172.19.0.1"
 	}
@@ -60,7 +60,7 @@ func CreateNewDatabase(newDb string, config DBConfig) CreateDBResponse {
 		Message:   "",
 	}
 
-	db, err := connection(config)
+	db, err := Connection(config)
 	if err != nil {
 		response.Error = err
 		response.Message = "Failed to create database"
@@ -111,7 +111,7 @@ func GetAllDatabases(config DBConfig) DatabaseNames {
 }
 
 func GetAllColumnNamesfromTable(config DBConfig) ColumnNames {
-	query := "SELECT tablename::text FROM pg_catalog.pg_tables WHERE schemaname = 'public';"
+	query := "SELECT column_name FROM information_schema.columns WHERE table_name = 'your_table';"
 
 	data := getDataFromDB(query, config)
 
