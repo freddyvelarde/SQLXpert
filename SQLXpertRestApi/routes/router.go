@@ -1,4 +1,4 @@
-package modules
+package routes
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,7 +7,6 @@ import (
 func Router(app *gin.Engine) {
 	app.GET("/", mainRoute)
 	app.POST("/create", createDataBase)
-	// app.POST("/connection", databaseConnection)
 	app.POST("/query", makeQueries)
 	app.POST("/databases", getAllDatabases)
 }

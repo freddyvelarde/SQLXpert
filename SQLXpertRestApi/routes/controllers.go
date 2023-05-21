@@ -1,4 +1,4 @@
-package modules
+package routes
 
 import (
 	"net/http"
@@ -77,32 +77,6 @@ func makeQueries(ctx *gin.Context) {
 	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
 	// ctx.JSON(http.StatusAccepted, data)
 }
-
-// func databaseConnection(ctx *gin.Context) {
-//   body := struct {
-//     DbName   string `json:"dbName"`
-//     Password string `json:"password"`
-//     User     string `json:"user"`
-//     Host     string `json:"host"`
-//     Port     int    `json:"port"`
-//   }{}
-//
-//   dbConfig := utils.DBConfig{
-//     Port:     body.Port,
-//     User:     body.User,
-//     Password: body.Password,
-//     DbName:   body.DbName,
-//     Host:     body.Host,
-//   }
-//
-//   _, err := repositories.Connection(dbConfig)
-//   if err != nil {
-//     ctx.JSON(http.StatusBadRequest, err)
-//     return
-//   }
-//
-//   ctx.JSON(http.StatusAccepted, gin.H{"message": "Database connected successfully"})
-// }
 
 func getAllDatabases(ctx *gin.Context) {
 	body := struct {
