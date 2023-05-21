@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/freddyvelarde/SQLXpert/utils"
+	"github.com/freddyvelarde/SQLXpert/structs"
 )
 
-func Connection(config utils.DBConfig) (*sql.DB, error) {
+func Connection(config structs.DBConfig) (*sql.DB, error) {
 	if strings.ToLower(config.Host) == "localhost" {
 		config.Host = "172.19.0.1"
 	}

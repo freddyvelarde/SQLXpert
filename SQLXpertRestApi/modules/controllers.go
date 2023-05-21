@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/freddyvelarde/SQLXpert/repositories"
-	"github.com/freddyvelarde/SQLXpert/utils"
+	"github.com/freddyvelarde/SQLXpert/structs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +23,7 @@ func createDataBase(ctx *gin.Context) {
 		return
 	}
 
-	var dbConfig utils.DBConfig
+	var dbConfig structs.DBConfig
 
 	dbConfig.Port = data.Port
 	dbConfig.User = data.User
@@ -36,7 +36,7 @@ func createDataBase(ctx *gin.Context) {
 		ctx.JSON(http.StatusConflict, err)
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"message": response})
+	ctx.JSON(http.StatusAccepted, response)
 }
 
 func makeQueries(ctx *gin.Context) {
@@ -54,7 +54,7 @@ func makeQueries(ctx *gin.Context) {
 		return
 	}
 
-	dbConfig := utils.DBConfig{
+	dbConfig := structs.DBConfig{
 		Port:     body.Port,
 		User:     body.User,
 		Password: body.Password,
@@ -62,8 +62,17 @@ func makeQueries(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	data := repositories.Queries(body.Query, dbConfig)
-	columns := repositories.GetAllColumnNamesfromTable(dbConfig)
+	data, err := repositories.Queries(body.Query, dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusAccepted, err)
+		return
+	}
+
+	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusAccepted, err)
+		return
+	}
 
 	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
 	// ctx.JSON(http.StatusAccepted, data)
@@ -108,7 +117,7 @@ func getAllDatabases(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	dbConfig := utils.DBConfig{
+	dbConfig := structs.DBConfig{
 		Port:     body.Port,
 		User:     body.User,
 		Password: body.Password,
@@ -116,7 +125,11 @@ func getAllDatabases(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	res := repositories.GetAllDatabases(dbConfig)
+	res, err := repositories.GetAllDatabases(dbConfig)
+	if err != nil {
+		ctx.JSON(http.StatusAccepted, err)
+		return
+	}
 
 	ctx.JSON(http.StatusAccepted, res)
 }
