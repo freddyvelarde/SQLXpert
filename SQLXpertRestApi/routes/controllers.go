@@ -9,6 +9,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func connection(c *gin.Context) {
+	body := struct {
+		DbName   string `json:"dbName"`
+		Password string `json:"password"`
+		User     string `json:"user"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+		NewDB    string `json:"newDB"`
+	}{}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	dbConfig := structs.DBConfig{
+		Port:     body.Port,
+		User:     body.User,
+		Password: body.Password,
+		DbName:   body.DbName,
+		Host:     body.Host,
+	}
+
+	tables, err := repositories.GetTableNames(dbConfig)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "bad request"})
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{"tablenames": tables, "status": http.StatusAccepted})
+}
+
 func createDataBase(ctx *gin.Context) {
 	data := struct {
 		DbName   string `json:"dbName"`
