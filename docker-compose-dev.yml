@@ -4,7 +4,7 @@ services:
   server:
     container_name: gin-server
     build:
-      context: ./server
+      context: ./SQLXpertRestApi
       dockerfile: Dockerfile.dev
     ports:
       - "7676:7676"
@@ -13,7 +13,7 @@ services:
     links:
       - web-client
     volumes:
-      - ./server:/app
+      - ./SQLXpertRestApi:/app
 
   web-client:
     container_name: nextjs
