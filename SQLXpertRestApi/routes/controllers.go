@@ -34,10 +34,11 @@ func createDataBase(ctx *gin.Context) {
 
 	response, err := repositories.CreateNewDatabase(data.NewDB, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusConflict, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
+		return
 	}
 
-	ctx.JSON(http.StatusAccepted, response)
+	ctx.JSON(http.StatusAccepted, gin.H{"response": response, "status": http.StatusAccepted})
 }
 
 func makeQueries(ctx *gin.Context) {
@@ -64,22 +65,19 @@ func makeQueries(ctx *gin.Context) {
 	}
 
 	tableNames, _ := repositories.GetTableNames(dbConfig)
-	// fmt.Println(d)
 	data, err := repositories.Queries(utils.NormalizeQuery(body.Query, tableNames), dbConfig)
-	// data, err := repositories.Queries(body.Query, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusAccepted, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
 		return
 	}
 
-	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig)
+	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, body.Query)
 	if err != nil {
-		ctx.JSON(http.StatusAccepted, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns})
-	// ctx.JSON(http.StatusAccepted, data)
+	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns, "status": http.StatusAccepted})
 }
 
 func getAllDatabases(ctx *gin.Context) {
@@ -93,6 +91,7 @@ func getAllDatabases(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	dbConfig := structs.DBConfig{
@@ -105,11 +104,11 @@ func getAllDatabases(ctx *gin.Context) {
 
 	res, err := repositories.GetAllDatabases(dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusAccepted, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, res)
+	ctx.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted, "databases": res})
 }
 
 func mainRoute(ctx *gin.Context) {

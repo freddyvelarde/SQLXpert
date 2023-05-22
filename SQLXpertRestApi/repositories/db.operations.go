@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/freddyvelarde/SQLXpert/database"
 	"github.com/freddyvelarde/SQLXpert/structs"
@@ -74,7 +75,7 @@ func GetTableNames(config structs.DBConfig) (interface{}, error) {
 	for _, value := range data.([]map[string]interface{}) {
 		tablename, ok := value["tablename"].(string)
 		if !ok {
-			continue
+			return nil, fmt.Errorf("table name missing")
 		}
 		res = append(res, tablename)
 	}
@@ -82,10 +83,25 @@ func GetTableNames(config structs.DBConfig) (interface{}, error) {
 	return res, nil
 }
 
-func GetAllColumnNamesfromTable(config structs.DBConfig) (interface{}, error) {
-	query := "SELECT column_name FROM information_schema.columns WHERE table_name = 'your_table';"
+func GetAllColumnNamesfromTable(config structs.DBConfig, query string) (interface{}, error) {
+	querySplited := strings.Split(strings.ToLower(query), " ")
 
-	data, err := utils.GetDataFromDB(query, config)
+	var table string
+	for i, word := range querySplited {
+		if word == "from" {
+			tb := querySplited[i+1]
+			if tb[len(tb)-1] == ';' {
+				table = tb[:len(tb)-1]
+			} else {
+				table = tb
+			}
+			break
+		}
+	}
+
+	q := "SELECT column_name::text FROM information_schema.columns WHERE table_name = '" + table + "' AND table_schema = 'public';"
+
+	data, err := utils.GetDataFromDB(q, config)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +109,9 @@ func GetAllColumnNamesfromTable(config structs.DBConfig) (interface{}, error) {
 	columns := []string{}
 
 	for _, value := range data.([]map[string]interface{}) {
-		column, ok := value["tablename"].(string)
+		column, ok := value["column_name"].(string)
 		if !ok {
-			continue
+			return nil, fmt.Errorf("column name missing")
 		}
 		columns = append(columns, column)
 	}

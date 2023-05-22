@@ -24,9 +24,11 @@ func splitString(str string) []string {
 }
 
 func tableMatch(target string, str interface{}) bool {
-	for _, s := range str.([]string) {
-		if s == target {
-			return true
+	if stringsSlice, ok := str.([]string); ok { // Check if str is of type []string
+		for _, s := range stringsSlice {
+			if s == target {
+				return true
+			}
 		}
 	}
 	return false
