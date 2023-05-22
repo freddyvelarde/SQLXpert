@@ -6,13 +6,13 @@ export default function Connection() {
   const [port, setPort] = useState<number>(5432);
   const [dbName, setDbName] = useState<string>("freddy_db");
   const [user, setUser] = useState<string>("admin");
-  const [quey, setQuery] = useState<string>('select * from "user"');
+  // const [quey, setQuery] = useState<string>('select * from user;');
   const [password, setPassword] = useState<string>("admin");
 
   const [res, setRes] = useState<[]>([]);
 
   const makeQuery = async () => {
-    const request = await fetch("http://172.19.0.1:7676/query", {
+    const request = await fetch("http://172.19.0.1:7676/connection", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +23,6 @@ export default function Connection() {
         user,
         password,
         dbName,
-        query: quey,
       }),
     });
     const response = await request.json();
@@ -39,13 +38,6 @@ export default function Connection() {
     <div>
       <h1>connection view</h1>
       <form action="" onSubmit={handleOnSubmitEvent}>
-        <Input
-          type="text"
-          placeholder="SELECT * FROM tablename"
-          label="Query: "
-          state={quey}
-          setState={setQuery}
-        />
         <Input
           type="text"
           placeholder="username"
@@ -81,7 +73,7 @@ export default function Connection() {
           state={password}
           setState={setPassword}
         />
-        <button>send data</button>
+        <button>Connect database</button>
       </form>
       <button onClick={() => console.log(res)}>getData</button>
     </div>

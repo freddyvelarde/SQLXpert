@@ -3,7 +3,7 @@ interface InputProps {
   placeholder: string;
   label: string;
   state: string | number;
-  setState: React.Dispatch<React.SetStateAction<string>>;
+  setState: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export default function Input({
