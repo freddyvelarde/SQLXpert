@@ -8,7 +8,6 @@ func splitString(str string) []string {
 		if char == ' ' || char == '.' || char == ';' || char == ',' {
 			splited = append(splited, strPiece)
 
-			// strPiece = ""
 			strPiece = string(char)
 			splited = append(splited, strPiece)
 
