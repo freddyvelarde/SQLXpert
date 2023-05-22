@@ -1,33 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../../components/Input";
+import { useNavigate } from "react-router-dom";
+import { dbConnection } from "../../data/endpoints";
 
 export default function Connection() {
+  const navigate = useNavigate();
+
+  // database config
   const [host, setHost] = useState<string>("localhost");
-  const [port, setPort] = useState<number>(5432);
+  const [port, setPort] = useState<string>("5432");
   const [dbName, setDbName] = useState<string>("freddy_db");
   const [user, setUser] = useState<string>("admin");
-  // const [quey, setQuery] = useState<string>('select * from user;');
   const [password, setPassword] = useState<string>("admin");
 
-  const [res, setRes] = useState<[]>([]);
+  // Rest Api response
+  const [response, setResponse] = useState<any>([]);
+
+  const navigateToDashboard = async () => {
+    const res = await response.connected;
+    if (res) {
+      navigate(`/${dbName}`, { replace: true });
+    }
+  };
 
   const makeQuery = async () => {
-    const request = await fetch("http://172.19.0.1:7676/connection", {
+    const request = await fetch(dbConnection, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         host,
-        port,
+        port: +port,
         user,
         password,
         dbName,
       }),
     });
     const response = await request.json();
-    setRes(response);
+    setResponse(response);
   };
+
+  useEffect(() => {
+    navigateToDashboard();
+  }, [makeQuery]);
 
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +52,7 @@ export default function Connection() {
 
   return (
     <div>
-      <h1>connection view</h1>
+      <h1>PostgreSql connection</h1>
       <form action="" onSubmit={handleOnSubmitEvent}>
         <Input
           type="text"
@@ -75,7 +91,6 @@ export default function Connection() {
         />
         <button>Connect database</button>
       </form>
-      <button onClick={() => console.log(res)}>getData</button>
     </div>
   );
 }

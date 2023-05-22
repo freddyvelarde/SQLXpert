@@ -3,8 +3,8 @@ import useTheme from "./hooks/setTheme";
 // import Connection from "./views/Connection";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage";
-import Dinamic from "./pages/Dinamic";
-import Connection from "./views/Connection";
+import Connection from "./pages/Connection";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -18,8 +18,8 @@ function App() {
       element: <Connection />,
     },
     {
-      path: "/:id",
-      element: <Dinamic />,
+      path: "/:database",
+      element: <Dashboard />,
     },
   ]);
 
