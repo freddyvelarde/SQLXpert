@@ -5,6 +5,7 @@ import (
 
 	"github.com/freddyvelarde/SQLXpert/repositories"
 	"github.com/freddyvelarde/SQLXpert/structs"
+	"github.com/freddyvelarde/SQLXpert/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -62,7 +63,10 @@ func makeQueries(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	data, err := repositories.Queries(body.Query, dbConfig)
+	tableNames, _ := repositories.GetTableNames(dbConfig)
+	// fmt.Println(d)
+	data, err := repositories.Queries(utils.NormalizeQuery(body.Query, tableNames), dbConfig)
+	// data, err := repositories.Queries(body.Query, dbConfig)
 	if err != nil {
 		ctx.JSON(http.StatusAccepted, err)
 		return

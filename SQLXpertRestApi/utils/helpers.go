@@ -17,7 +17,6 @@ func IsQueryExpectedToReturnRows(query string) bool {
 func ExecuteQuery(query string, config structs.DBConfig) (interface{}, error) {
 	db, err := database.Connection(config)
 	if err != nil {
-		// response.Message = fmt.Sprintf("failed to connect to the Database: %s", err)
 		return fmt.Sprintf("failed to connect to the Database: %s", err), err
 	}
 	defer db.Close()

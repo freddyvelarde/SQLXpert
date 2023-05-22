@@ -63,6 +63,25 @@ func GetAllDatabases(config structs.DBConfig) (interface{}, error) {
 	return databases, nil
 }
 
+func GetTableNames(config structs.DBConfig) (interface{}, error) {
+	query := "SELECT tablename::text FROM pg_catalog.pg_tables WHERE schemaname = 'public';"
+
+	data, err := utils.GetDataFromDB(query, config)
+	if err != nil {
+		return nil, err
+	}
+	var res []string
+	for _, value := range data.([]map[string]interface{}) {
+		tablename, ok := value["tablename"].(string)
+		if !ok {
+			continue
+		}
+		res = append(res, tablename)
+	}
+
+	return res, nil
+}
+
 func GetAllColumnNamesfromTable(config structs.DBConfig) (interface{}, error) {
 	query := "SELECT column_name FROM information_schema.columns WHERE table_name = 'your_table';"
 
