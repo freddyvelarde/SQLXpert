@@ -20,7 +20,7 @@ func connection(c *gin.Context) {
 	}{}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "connected": false, "message": "bad request"})
 		return
 	}
 	dbConfig := structs.DBConfig{
@@ -33,10 +33,10 @@ func connection(c *gin.Context) {
 
 	tables, err := repositories.GetTableNames(dbConfig)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "bad request", "connected": false})
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"tablenames": tables, "status": http.StatusAccepted})
+	c.JSON(http.StatusAccepted, gin.H{"tablenames": tables, "status": http.StatusAccepted, "connected": true})
 }
 
 func createDataBase(ctx *gin.Context) {
