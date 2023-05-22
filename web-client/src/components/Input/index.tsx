@@ -1,9 +1,12 @@
+import { DbConnection } from "../../interfaces/dbConnectionConfig";
+
 interface InputProps {
   type: string;
   placeholder: string;
   label: string;
-  state: string | number;
-  setState: React.Dispatch<React.SetStateAction<any>>;
+  name: keyof DbConnection;
+  state: DbConnection;
+  setState: React.Dispatch<React.SetStateAction<DbConnection>>;
 }
 
 export default function Input({
@@ -12,9 +15,14 @@ export default function Input({
   label,
   setState,
   state,
+  name,
 }: InputProps) {
   const handleOnChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState(e.target.value);
+    const { name, value } = e.target;
+    setState((prevConfig) => ({
+      ...prevConfig,
+      [name]: value,
+    }));
   };
 
   return (
@@ -24,7 +32,8 @@ export default function Input({
         <input
           id={"formId-" + placeholder}
           type={type}
-          value={state}
+          name={name}
+          value={state[name]}
           onChange={handleOnChangeEvent}
           placeholder={placeholder}
         />

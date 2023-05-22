@@ -2,52 +2,73 @@ import { useEffect, useState } from "react";
 import Input from "../../components/Input";
 import { useNavigate } from "react-router-dom";
 import { dbConnection } from "../../data/endpoints";
+import { DbConnection } from "../../interfaces/dbConnectionConfig";
+import useHttpRequest from "../../hooks/useHttpRequest";
+
+interface Response {
+  connected: boolean;
+}
 
 export default function Connection() {
   const navigate = useNavigate();
 
   // database config
-  const [host, setHost] = useState<string>("localhost");
-  const [port, setPort] = useState<string>("5432");
-  const [dbName, setDbName] = useState<string>("freddy_db");
-  const [user, setUser] = useState<string>("admin");
-  const [password, setPassword] = useState<string>("admin");
+  const [dbConfigConnection, setDbConfigConnection] = useState<DbConnection>({
+    host: "localhost",
+    port: "5432",
+    dbName: "freddy_db",
+    user: "admin",
+    password: "admin",
+  });
+  const { data, fetchData } = useHttpRequest<Response>(dbConnection, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      host: dbConfigConnection.host,
+      port: +dbConfigConnection.port,
+      user: dbConfigConnection.user,
+      password: dbConfigConnection.password,
+      dbName: dbConfigConnection.dbName,
+    }),
+  });
 
   // Rest Api response
-  const [response, setResponse] = useState<any>([]);
+  // const [response, setResponse] = useState<any>([]);
 
-  const navigateToDashboard = async () => {
-    const res = await response.connected;
+  const navigateToDashboard = () => {
+    const res = data?.connected;
     if (res) {
-      navigate(`/${dbName}`, { replace: true });
+      navigate(`/${dbConfigConnection.dbName}`, { replace: true });
     }
   };
 
-  const makeQuery = async () => {
-    const request = await fetch(dbConnection, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        host,
-        port: +port,
-        user,
-        password,
-        dbName,
-      }),
-    });
-    const response = await request.json();
-    setResponse(response);
-  };
+  // const makeQuery = async () => {
+  //   const request = await fetch(dbConnection, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       host: dbConfigConnection.host,
+  //       port: +dbConfigConnection.port,
+  //       user: dbConfigConnection.user,
+  //       password: dbConfigConnection.password,
+  //       dbName: dbConfigConnection.dbName,
+  //     }),
+  //   });
+  //   const response = await request.json();
+  //   setResponse(response);
+  // };
 
   useEffect(() => {
     navigateToDashboard();
-  }, [makeQuery]);
+  }, [fetchData]);
 
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
-    makeQuery();
+    fetchData();
   };
 
   return (
@@ -58,36 +79,41 @@ export default function Connection() {
           type="text"
           placeholder="username"
           label="USER: "
-          state={user}
-          setState={setUser}
+          state={dbConfigConnection}
+          name="user"
+          setState={setDbConfigConnection}
         />
         <Input
           type="text"
           placeholder="localhost"
           label="HOST: "
-          state={host}
-          setState={setHost}
+          name="host"
+          state={dbConfigConnection}
+          setState={setDbConfigConnection}
         />
         <Input
           type="text"
           placeholder="5432"
           label="PORT: "
-          state={port}
-          setState={setPort}
+          name="port"
+          state={dbConfigConnection}
+          setState={setDbConfigConnection}
         />
         <Input
           type="text"
           placeholder="postgres"
           label="DB NAME: "
-          state={dbName}
-          setState={setDbName}
+          name="dbName"
+          state={dbConfigConnection}
+          setState={setDbConfigConnection}
         />
         <Input
           type="text"
           placeholder="admin"
           label="DB PASSWORD: "
-          state={password}
-          setState={setPassword}
+          name="password"
+          state={dbConfigConnection}
+          setState={setDbConfigConnection}
         />
         <button>Connect database</button>
       </form>
