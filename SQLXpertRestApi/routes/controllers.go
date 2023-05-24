@@ -82,7 +82,7 @@ func makeQueries(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "data": nil, "status": http.StatusBadRequest})
 		return
 	}
 
@@ -95,19 +95,21 @@ func makeQueries(ctx *gin.Context) {
 	}
 
 	tableNames, _ := repositories.GetTableNames(dbConfig)
-	data, err := repositories.Queries(utils.NormalizeQuery(body.Query, tableNames), dbConfig)
+
+	queryNormalized := utils.NormalizeQuery(body.Query, tableNames)
+	dataSelected, err := repositories.Queries(queryNormalized, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "failed": true, "data": nil, "message": "Failed query", "status": http.StatusBadRequest})
 		return
 	}
 
 	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, body.Query)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed to get the column names"})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"data": data, "columns": columns, "status": http.StatusAccepted})
+	ctx.JSON(http.StatusAccepted, gin.H{"data": dataSelected, "columns": columns, "status": http.StatusBadRequest, "failed": false})
 }
 
 func getAllDatabases(ctx *gin.Context) {
