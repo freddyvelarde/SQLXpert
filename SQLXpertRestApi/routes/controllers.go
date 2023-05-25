@@ -20,7 +20,10 @@ func connection(c *gin.Context) {
 	}{}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "connected": false, "message": "bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":     err.Error(),
+			"connected": false, "message": "bad request",
+		})
 		return
 	}
 	dbConfig := structs.DBConfig{
@@ -33,10 +36,16 @@ func connection(c *gin.Context) {
 
 	tables, err := repositories.GetTableNames(dbConfig)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "bad request", "connected": false})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   err,
+			"message": "bad request", "connected": false,
+		})
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"tablenames": tables, "status": http.StatusAccepted, "connected": true})
+	c.JSON(http.StatusAccepted, gin.H{
+		"tablenames": tables,
+		"status":     http.StatusAccepted, "connected": true,
+	})
 }
 
 func createDataBase(ctx *gin.Context) {
@@ -50,7 +59,11 @@ func createDataBase(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":  err.Error(),
+			"failed": true,
+			"status": http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -64,11 +77,19 @@ func createDataBase(ctx *gin.Context) {
 
 	response, err := repositories.CreateNewDatabase(data.NewDB, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request", "failed": true, "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   err,
+			"message": "Failed request",
+			"failed":  true, "status": http.StatusBadRequest,
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"response": response, "status": http.StatusAccepted, "failed": false})
+	ctx.JSON(http.StatusAccepted, gin.H{
+		"response": response,
+		"status":   http.StatusAccepted,
+		"failed":   false,
+	})
 }
 
 func makeQueries(ctx *gin.Context) {
@@ -82,7 +103,11 @@ func makeQueries(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "data": nil, "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":  err.Error(),
+			"failed": true,
+			"data":   nil, "status": http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -99,17 +124,30 @@ func makeQueries(ctx *gin.Context) {
 	queryNormalized := utils.NormalizeQuery(body.Query, tableNames)
 	dataSelected, err := repositories.Queries(queryNormalized, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "failed": true, "data": nil, "message": "Failed query", "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   err,
+			"failed":  true,
+			"data":    nil,
+			"message": "Failed query", "status": http.StatusBadRequest,
+		})
 		return
 	}
 
 	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, body.Query)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed to get the column names"})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   err,
+			"message": "Failed to get the column names",
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"data": dataSelected, "columns": columns, "status": http.StatusBadRequest, "failed": false})
+	ctx.JSON(http.StatusAccepted, gin.H{
+		"data":    dataSelected,
+		"columns": columns,
+		"status":  http.StatusBadRequest,
+		"failed":  false,
+	})
 }
 
 func getAllDatabases(ctx *gin.Context) {
@@ -122,7 +160,11 @@ func getAllDatabases(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":  err.Error(),
+			"failed": true,
+			"status": http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -136,9 +178,15 @@ func getAllDatabases(ctx *gin.Context) {
 
 	databases, err := repositories.GetAllDatabases(dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request", "failed": true, "status": http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   err,
+			"message": "Failed request", "failed": true, "status": http.StatusBadRequest,
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted, "databases": databases, "failed": false})
+	ctx.JSON(http.StatusAccepted, gin.H{
+		"status":    http.StatusAccepted,
+		"databases": databases, "failed": false,
+	})
 }
