@@ -18,12 +18,12 @@ services:
   web-client:
     container_name: nextjs
     build:
-      context: ./web-client
+      context: ./SQLXpertWebClient/
       dockerfile: Dockerfile
     ports:
       - "7677:5173"
     environment:
       PORT: 5173
     volumes:
-      - ./web-client:/app
+      - ./SQLXpertWebClient:/app
     command: sh -c 'npm run dev --host'
