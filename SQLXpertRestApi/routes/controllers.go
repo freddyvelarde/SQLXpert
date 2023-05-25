@@ -50,7 +50,7 @@ func createDataBase(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "status": http.StatusBadRequest})
 		return
 	}
 
@@ -64,11 +64,11 @@ func createDataBase(ctx *gin.Context) {
 
 	response, err := repositories.CreateNewDatabase(data.NewDB, dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request", "failed": true, "status": http.StatusBadRequest})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"response": response, "status": http.StatusAccepted})
+	ctx.JSON(http.StatusAccepted, gin.H{"response": response, "status": http.StatusAccepted, "failed": false})
 }
 
 func makeQueries(ctx *gin.Context) {
