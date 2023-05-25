@@ -122,7 +122,7 @@ func getAllDatabases(ctx *gin.Context) {
 	}{}
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "failed": true, "status": http.StatusBadRequest})
 		return
 	}
 
@@ -134,17 +134,11 @@ func getAllDatabases(ctx *gin.Context) {
 		Host:     body.Host,
 	}
 
-	res, err := repositories.GetAllDatabases(dbConfig)
+	databases, err := repositories.GetAllDatabases(dbConfig)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err, "message": "Failed request", "failed": true, "status": http.StatusBadRequest})
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted, "databases": res})
-}
-
-func mainRoute(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"message": "hello world from modularized golang server",
-	})
+	ctx.JSON(http.StatusAccepted, gin.H{"status": http.StatusAccepted, "databases": databases, "failed": false})
 }
