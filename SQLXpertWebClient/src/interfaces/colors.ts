@@ -1,4 +1,4 @@
-export interface Colors {
+export interface ColorProps {
   colors: {
     background: string;
     foreground: string;

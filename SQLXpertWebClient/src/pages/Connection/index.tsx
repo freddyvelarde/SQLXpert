@@ -6,6 +6,7 @@ import DbConnection from "../../interfaces/dbConnectionConfig";
 import useHttpRequest from "../../hooks/useHttpRequest";
 import useDatabases from "../../hooks/useDatabases";
 import { ConnectionResponse } from "../../interfaces/HttpResponses";
+import { emptySpaceValidation } from "../../utils/stringValidation";
 
 export default function Connection() {
   const { addNewDatabase } = useDatabases();
@@ -37,8 +38,7 @@ export default function Connection() {
   const navigateToDashboard = () => {
     const res = data?.connected;
     if (res) {
-      navigate(`/${dbConfigConnection.dbName}`, { replace: true });
-      console.log(data);
+      navigate(`/${dbConfigConnection.workspace}`, { replace: true });
     }
   };
 
@@ -48,7 +48,13 @@ export default function Connection() {
 
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!dbConfigConnection.workspace) return;
+    if (!emptySpaceValidation(dbConfigConnection.workspace))
+      return console.log("no empty space");
+
     fetchData();
+
     addNewDatabase(dbConfigConnection);
   };
 
