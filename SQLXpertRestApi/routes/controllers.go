@@ -22,7 +22,9 @@ func connection(c *gin.Context) {
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":     err.Error(),
-			"connected": false, "message": "bad request",
+			"connected": false,
+			"message":   "bad request",
+			"status":    http.StatusBadRequest,
 		})
 		return
 	}
@@ -37,14 +39,17 @@ func connection(c *gin.Context) {
 	tables, err := repositories.GetTableNames(dbConfig)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   err,
-			"message": "bad request", "connected": false,
+			"error":     err,
+			"message":   "bad request",
+			"connected": false,
+			"status":    http.StatusBadRequest,
 		})
 	}
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"tablenames": tables,
-		"status":     http.StatusAccepted, "connected": true,
+		"status":     http.StatusAccepted,
+		"connected":  true,
 	})
 }
 
