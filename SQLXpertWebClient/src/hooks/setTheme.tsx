@@ -17,7 +17,7 @@ export default function useTheme() {
   };
 
   return {
-    colors: theme ? colors.light : colors.dark,
+    colorPalette: theme ? colors.light : colors.dark,
     switchTheme,
     themeState: theme,
     storeThemeIntoLocalStorage,
