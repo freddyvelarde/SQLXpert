@@ -1,10 +1,14 @@
 import styled from "styled-components";
 
 export const ThemeSwitcherStyled = styled.div`
+  width: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   img {
-    width: auto;
+    scale: 0.6;
     &:hover {
-      scale: 1.1;
+      scale: 0.7;
     }
     cursor: pointer;
     transition: 0.3s;
