@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import useTheme from "./hooks/setTheme";
-// import Connection from "./views/Connection";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage";
 import Connection from "./pages/Connection";
 import Dashboard from "./pages/Dashboard";
+import useDatabases from "./hooks/useDatabases";
+import Main from "./pages/Main";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <h1>hello world from the main route</h1>,
+      element: <Main />,
       errorElement: <ErrorPage />,
     },
     {
@@ -35,6 +36,21 @@ function App() {
   useEffect(() => {
     localStorage.setItem("theme", JSON.stringify(themeState));
   }, [themeState]);
+
+  // databases store
+  const { setDatabasesIntoRedux, databases } = useDatabases();
+
+  useEffect(() => {
+    const data = localStorage.getItem("databases");
+    if (data !== null) {
+      setDatabasesIntoRedux(JSON.parse(data));
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("databases", JSON.stringify(databases));
+  }, [databases]);
 
   return (
     <>
