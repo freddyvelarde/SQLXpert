@@ -5,4 +5,5 @@ export default interface DbConnection {
   user: string;
   password: string;
   workspace?: string;
+  query?: string;
 }

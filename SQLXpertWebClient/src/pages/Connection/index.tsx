@@ -7,13 +7,16 @@ import useHttpRequest from "../../hooks/useHttpRequest";
 import useDatabases from "../../hooks/useDatabases";
 import { ConnectionResponse } from "../../interfaces/HttpResponses";
 import { emptySpaceValidation } from "../../utils/stringValidation";
+// import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Connection() {
   const { addNewDatabase } = useDatabases();
   const navigate = useNavigate();
 
+  // const { dbConfig, storeDbConfig } = useDbConfig();
+
   // database config
-  const [dbConfigConnection, setDbConfigConnection] = useState<DbConnection>({
+  const [dbConfig, storeDbConfig] = useState<DbConnection>({
     host: "localhost",
     port: "5432",
     dbName: "freddy_db",
@@ -27,18 +30,18 @@ export default function Connection() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      host: dbConfigConnection.host,
-      port: +dbConfigConnection.port,
-      user: dbConfigConnection.user,
-      password: dbConfigConnection.password,
-      dbName: dbConfigConnection.dbName,
+      host: dbConfig.host,
+      port: +dbConfig.port,
+      user: dbConfig.user,
+      password: dbConfig.password,
+      dbName: dbConfig.dbName,
     }),
   });
 
   const navigateToDashboard = () => {
     const res = data?.connected;
     if (res) {
-      navigate(`/${dbConfigConnection.workspace}`, { replace: true });
+      navigate(`/${dbConfig.workspace}`, { replace: true });
     }
   };
 
@@ -49,13 +52,13 @@ export default function Connection() {
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!dbConfigConnection.workspace) return;
-    if (!emptySpaceValidation(dbConfigConnection.workspace))
+    if (!dbConfig.workspace) return;
+    if (!emptySpaceValidation(dbConfig.workspace))
       return console.log("no empty space");
 
     fetchData();
 
-    addNewDatabase(dbConfigConnection);
+    addNewDatabase(dbConfig);
   };
 
   return (
@@ -66,49 +69,49 @@ export default function Connection() {
           type="text"
           placeholder="Workspace"
           label="WORKSPACE: "
-          state={dbConfigConnection}
+          state={dbConfig}
           name="workspace"
-          setState={setDbConfigConnection}
+          setState={storeDbConfig}
         />
         <Input
           type="text"
           placeholder="username"
           label="USER: "
-          state={dbConfigConnection}
+          state={dbConfig}
           name="user"
-          setState={setDbConfigConnection}
+          setState={storeDbConfig}
         />
         <Input
           type="text"
           placeholder="localhost"
           label="HOST: "
           name="host"
-          state={dbConfigConnection}
-          setState={setDbConfigConnection}
+          state={dbConfig}
+          setState={storeDbConfig}
         />
         <Input
           type="text"
           placeholder="5432"
           label="PORT: "
           name="port"
-          state={dbConfigConnection}
-          setState={setDbConfigConnection}
+          state={dbConfig}
+          setState={storeDbConfig}
         />
         <Input
           type="text"
           placeholder="postgres"
           label="DB NAME: "
           name="dbName"
-          state={dbConfigConnection}
-          setState={setDbConfigConnection}
+          state={dbConfig}
+          setState={storeDbConfig}
         />
         <Input
           type="text"
           placeholder="admin"
           label="DB PASSWORD: "
           name="password"
-          state={dbConfigConnection}
-          setState={setDbConfigConnection}
+          state={dbConfig}
+          setState={storeDbConfig}
         />
         <button>Connect database</button>
       </form>

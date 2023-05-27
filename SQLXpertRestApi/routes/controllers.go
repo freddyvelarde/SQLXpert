@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/freddyvelarde/SQLXpert/repositories"
 	"github.com/freddyvelarde/SQLXpert/structs"
@@ -133,12 +134,13 @@ func makeQueries(ctx *gin.Context) {
 			"error":   err,
 			"failed":  true,
 			"data":    nil,
-			"message": "Failed query", "status": http.StatusBadRequest,
+			"message": "Failed query",
+			"status":  http.StatusBadRequest,
 		})
 		return
 	}
 
-	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, body.Query)
+	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, strings.ReplaceAll(body.Query, "\n", " "))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   err,
