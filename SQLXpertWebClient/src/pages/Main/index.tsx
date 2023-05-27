@@ -1,3 +1,7 @@
 export default function Main() {
-  return <div> hello world</div>;
+  return (
+    <div>
+      <h1>Hello world from root route</h1>
+    </div>
+  );
 }

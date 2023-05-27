@@ -11,12 +11,13 @@ import { emptySpaceValidation } from "../../utils/stringValidation";
 
 export default function Connection() {
   const { addNewDatabase } = useDatabases();
+  const [error, setError] = useState({ failed: false, message: "" });
   const navigate = useNavigate();
 
   // const { dbConfig, storeDbConfig } = useDbConfig();
 
   // database config
-  const [dbConfig, storeDbConfig] = useState<DbConnection>({
+  const [dbConfigForm, setDbCofigForm] = useState<DbConnection>({
     host: "localhost",
     port: "5432",
     dbName: "freddy_db",
@@ -30,35 +31,47 @@ export default function Connection() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      host: dbConfig.host,
-      port: +dbConfig.port,
-      user: dbConfig.user,
-      password: dbConfig.password,
-      dbName: dbConfig.dbName,
+      host: dbConfigForm.host,
+      port: +dbConfigForm.port,
+      user: dbConfigForm.user,
+      password: dbConfigForm.password,
+      dbName: dbConfigForm.dbName,
     }),
   });
 
   const navigateToDashboard = () => {
     const res = data?.connected;
     if (res) {
-      navigate(`/${dbConfig.workspace}`, { replace: true });
+      navigate(`/${dbConfigForm.workspace}`, { replace: true });
     }
   };
 
   useEffect(() => {
     navigateToDashboard();
+    console.log(data);
   }, [fetchData]);
 
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!dbConfig.workspace) return;
-    if (!emptySpaceValidation(dbConfig.workspace))
-      return console.log("no empty space");
+    if (!dbConfigForm.workspace)
+      return setError({
+        failed: true,
+        message: "Workspace field does not exist.",
+      });
+    if (!emptySpaceValidation(dbConfigForm.workspace))
+      return setError({
+        failed: true,
+        message: "Please no empty spaces in workspace field.",
+      });
 
     fetchData();
 
-    addNewDatabase(dbConfig);
+    if (!data) {
+      return setError({ failed: true, message: "Error connecting database " });
+    }
+
+    addNewDatabase(dbConfigForm);
   };
 
   return (
@@ -69,52 +82,54 @@ export default function Connection() {
           type="text"
           placeholder="Workspace"
           label="WORKSPACE: "
-          state={dbConfig}
+          state={dbConfigForm}
           name="workspace"
-          setState={storeDbConfig}
+          setState={setDbCofigForm}
         />
         <Input
           type="text"
           placeholder="username"
           label="USER: "
-          state={dbConfig}
+          state={dbConfigForm}
           name="user"
-          setState={storeDbConfig}
+          setState={setDbCofigForm}
         />
         <Input
           type="text"
           placeholder="localhost"
           label="HOST: "
           name="host"
-          state={dbConfig}
-          setState={storeDbConfig}
+          state={dbConfigForm}
+          setState={setDbCofigForm}
         />
         <Input
           type="text"
           placeholder="5432"
           label="PORT: "
           name="port"
-          state={dbConfig}
-          setState={storeDbConfig}
+          state={dbConfigForm}
+          setState={setDbCofigForm}
         />
         <Input
           type="text"
           placeholder="postgres"
           label="DB NAME: "
           name="dbName"
-          state={dbConfig}
-          setState={storeDbConfig}
+          state={dbConfigForm}
+          setState={setDbCofigForm}
         />
         <Input
           type="text"
           placeholder="admin"
           label="DB PASSWORD: "
           name="password"
-          state={dbConfig}
-          setState={storeDbConfig}
+          state={dbConfigForm}
+          setState={setDbCofigForm}
         />
         <button>Connect database</button>
       </form>
+
+      {error.failed ? <p>{error.message}</p> : ""}
     </div>
   );
 }

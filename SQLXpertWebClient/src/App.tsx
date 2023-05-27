@@ -26,7 +26,8 @@ function App() {
     },
   ]);
 
-  const { themeState, storeThemeIntoLocalStorage, colorPalette } = useTheme();
+  const { themeState, storeThemeIntoLocalStorage, colorPalette, fonts } =
+    useTheme();
   useEffect(() => {
     const data = localStorage.getItem("theme");
     if (data !== null) {
@@ -55,7 +56,7 @@ function App() {
   }, [databases]);
 
   return (
-    <AppStyles colors={colorPalette}>
+    <AppStyles colors={colorPalette} fonts={fonts}>
       <RouterProvider router={router} />
       <ThemeSwitcher />
     </AppStyles>
