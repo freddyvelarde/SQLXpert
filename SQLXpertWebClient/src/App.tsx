@@ -26,6 +26,7 @@ function App() {
     },
   ]);
 
+  // theme store into local storage
   const { themeState, storeThemeIntoLocalStorage, colorPalette, fonts } =
     useTheme();
   useEffect(() => {
@@ -40,7 +41,7 @@ function App() {
     localStorage.setItem("theme", JSON.stringify(themeState));
   }, [themeState]);
 
-  // databases store
+  // databases store into local storage
   const { setDatabasesIntoRedux, databases } = useDatabases();
 
   useEffect(() => {
