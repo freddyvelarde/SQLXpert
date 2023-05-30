@@ -60,8 +60,8 @@ export default function Connection() {
         failed: true,
         message: "Please no empty spaces in workspace field.",
       });
-    fetchData();
 
+    fetchData();
     addNewDatabase(dbConfigForm);
     storeDbConfig(dbConfigForm);
   };
@@ -124,9 +124,7 @@ export default function Connection() {
         />
         <button>Connect database</button>
       </form>
-      <button onClick={() => console.log(dbCofigConnection)}>
-        Data config
-      </button>
+      <button onClick={() => console.log(data)}>Data config</button>
 
       {error.failed ? <p>{error.message}</p> : ""}
     </div>

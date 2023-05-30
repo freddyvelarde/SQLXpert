@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useDatabases from "../../hooks/useDatabases";
 import DbConnection from "../../interfaces/dbConnectionConfig";
 import useHttpRequest from "../../hooks/useHttpRequest";
 import { query } from "../../data/endpoints";
@@ -8,25 +7,7 @@ import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Dashboard() {
   const { paramsId } = useParams();
-  const { databases } = useDatabases();
   const { dbCofigConnection } = useDbConfig();
-  // const [db, setDb] = useState<DbConnection>({
-  //   host: "",
-  //   password: "",
-  //   user: "",
-  //   dbName: "",
-  //   port: "",
-  // });
-
-  // const getItem = () => {
-  //   const item = databases.find((item) => item.workspace === paramsId);
-  //   if (!item) return;
-  //   setDb(item);
-  // };
-
-  // useEffect(() => {
-  //   getItem();
-  // }, []);
 
   const [text, setText] = useState("");
 
@@ -41,14 +22,6 @@ export default function Dashboard() {
       dbName: dbCofigConnection.dbName,
       query: text,
     }),
-    // body: JSON.stringify({
-    //   host: "localhost",
-    //   port: 5432,
-    //   user: "admin",
-    //   password: "admin",
-    //   dbName: "freddy_db",
-    //   query: text,
-    // }),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
