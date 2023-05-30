@@ -112,7 +112,8 @@ func makeQueries(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":  err.Error(),
 			"failed": true,
-			"data":   nil, "status": http.StatusBadRequest,
+			"data":   nil,
+			"status": http.StatusBadRequest,
 		})
 		return
 	}
@@ -127,7 +128,7 @@ func makeQueries(ctx *gin.Context) {
 
 	tableNames, _ := repositories.GetTableNames(dbConfig)
 
-	queryNormalized := utils.NormalizeQuery(body.Query, tableNames)
+	queryNormalized := utils.NormalizeQuery(strings.ReplaceAll(body.Query, "\n", "  "), tableNames)
 	dataSelected, err := repositories.Queries(queryNormalized, dbConfig)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -140,7 +141,7 @@ func makeQueries(ctx *gin.Context) {
 		return
 	}
 
-	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, strings.ReplaceAll(body.Query, "\n", " "))
+	columns, err := repositories.GetAllColumnNamesfromTable(dbConfig, strings.ReplaceAll(body.Query, "\n", "  "))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   err,
