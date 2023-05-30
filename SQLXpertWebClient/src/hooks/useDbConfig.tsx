@@ -4,15 +4,18 @@ import { setDbConfig } from "../redux/features/dbConfigSlice";
 import DbConnection from "../interfaces/dbConnectionConfig";
 
 export default function useDbConfig() {
-  const dbConfig = useSelector((state: RootState) => state.dbConfig.value);
+  const dbCofigConnection = useSelector(
+    (state: RootState) => state.dbConfig.value
+  );
   const dispatch = useDispatch();
 
   const storeDbConfig = (dbConfig: DbConnection) => {
+    console.log("storing db cofig...");
     dispatch(setDbConfig(dbConfig));
   };
 
   return {
     storeDbConfig,
-    dbConfig
+    dbCofigConnection,
   };
 }

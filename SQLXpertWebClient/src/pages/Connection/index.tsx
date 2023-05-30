@@ -7,14 +7,14 @@ import useHttpRequest from "../../hooks/useHttpRequest";
 import useDatabases from "../../hooks/useDatabases";
 import { ConnectionResponse } from "../../interfaces/HttpResponses";
 import { emptySpaceValidation } from "../../utils/stringValidation";
-// import useDbConfig from "../../hooks/useDbConfig";
+import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Connection() {
   const { addNewDatabase } = useDatabases();
   const [error, setError] = useState({ failed: false, message: "" });
   const navigate = useNavigate();
 
-  // const { dbConfig, storeDbConfig } = useDbConfig();
+  const { dbCofigConnection, storeDbConfig } = useDbConfig();
 
   // database config
   const [dbConfigForm, setDbCofigForm] = useState<DbConnection>({
@@ -25,6 +25,7 @@ export default function Connection() {
     password: "admin",
     workspace: "workspace name",
   });
+
   const { data, fetchData } = useHttpRequest<ConnectionResponse>(dbConnection, {
     method: "POST",
     headers: {
@@ -47,7 +48,8 @@ export default function Connection() {
   };
 
   useEffect(() => {
-    navigateToDashboard();
+    // navigateToDashboard();
+    storeDbConfig(dbConfigForm);
     console.log(data);
   }, [fetchData]);
 
@@ -66,11 +68,6 @@ export default function Connection() {
       });
 
     fetchData();
-
-    if (!data) {
-      return setError({ failed: true, message: "Error connecting database " });
-    }
-
     addNewDatabase(dbConfigForm);
   };
 
@@ -128,6 +125,9 @@ export default function Connection() {
         />
         <button>Connect database</button>
       </form>
+      <button onClick={() => console.log(dbCofigConnection)}>
+        Data config
+      </button>
 
       {error.failed ? <p>{error.message}</p> : ""}
     </div>

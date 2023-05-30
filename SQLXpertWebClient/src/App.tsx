@@ -8,6 +8,7 @@ import useDatabases from "./hooks/useDatabases";
 import Main from "./pages/Main";
 import { AppStyles } from "./styles/app.styles";
 import ThemeSwitcher from "./components/ThemeSwitcher";
+import useDbConfig from "./hooks/useDbConfig";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,7 +27,7 @@ function App() {
     },
   ]);
 
-  // theme store into local storage
+  // storing theme into local storage
   const { themeState, storeThemeIntoLocalStorage, colorPalette, fonts } =
     useTheme();
   useEffect(() => {
@@ -41,7 +42,24 @@ function App() {
     localStorage.setItem("theme", JSON.stringify(themeState));
   }, [themeState]);
 
-  // databases store into local storage
+  // storing database config connection into local storage
+  const { dbCofigConnection, storeDbConfig } = useDbConfig();
+  useEffect(() => {
+    const data = localStorage.getItem("dbConfigConnection");
+    if (data !== null) {
+      storeDbConfig(JSON.parse(data));
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "dbConfigConnection",
+      JSON.stringify(dbCofigConnection)
+    );
+  }, [dbCofigConnection]);
+
+  // storing databases into local storage
   const { setDatabasesIntoRedux, databases } = useDatabases();
 
   useEffect(() => {
