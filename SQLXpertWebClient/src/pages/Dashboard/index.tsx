@@ -4,27 +4,29 @@ import useDatabases from "../../hooks/useDatabases";
 import DbConnection from "../../interfaces/dbConnectionConfig";
 import useHttpRequest from "../../hooks/useHttpRequest";
 import { query } from "../../data/endpoints";
+import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Dashboard() {
   const { paramsId } = useParams();
   const { databases } = useDatabases();
-  const [db, setDb] = useState<DbConnection>({
-    host: "",
-    password: "",
-    user: "",
-    dbName: "",
-    port: "",
-  });
+  const { dbCofigConnection } = useDbConfig();
+  // const [db, setDb] = useState<DbConnection>({
+  //   host: "",
+  //   password: "",
+  //   user: "",
+  //   dbName: "",
+  //   port: "",
+  // });
 
-  const getItem = () => {
-    const item = databases.find((item) => item.workspace === paramsId);
-    if (!item) return;
-    setDb(item);
-  };
+  // const getItem = () => {
+  //   const item = databases.find((item) => item.workspace === paramsId);
+  //   if (!item) return;
+  //   setDb(item);
+  // };
 
-  useEffect(() => {
-    getItem();
-  }, []);
+  // useEffect(() => {
+  //   getItem();
+  // }, []);
 
   const [text, setText] = useState("");
 
@@ -32,11 +34,11 @@ export default function Dashboard() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      host: db.host,
-      port: +db.port,
-      user: db.user,
-      password: db.password,
-      dbName: db.dbName,
+      host: dbCofigConnection.host,
+      port: +dbCofigConnection.port,
+      user: dbCofigConnection.user,
+      password: dbCofigConnection.password,
+      dbName: dbCofigConnection.dbName,
       query: text,
     }),
     // body: JSON.stringify({
@@ -70,7 +72,7 @@ export default function Dashboard() {
         ></textarea>
         <button type="submit">Submit</button>
       </form>
-      <button onClick={() => console.log(databases)}>data</button>
+      <button onClick={() => console.log(data)}>data</button>
     </>
   );
 }

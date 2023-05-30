@@ -47,12 +47,6 @@ export default function Connection() {
     }
   };
 
-  useEffect(() => {
-    // navigateToDashboard();
-    storeDbConfig(dbConfigForm);
-    console.log(data);
-  }, [fetchData]);
-
   const handleOnSubmitEvent = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -66,10 +60,15 @@ export default function Connection() {
         failed: true,
         message: "Please no empty spaces in workspace field.",
       });
-
     fetchData();
+
     addNewDatabase(dbConfigForm);
+    storeDbConfig(dbConfigForm);
   };
+
+  useEffect(() => {
+    navigateToDashboard();
+  }, [handleOnSubmitEvent]);
 
   return (
     <div>
