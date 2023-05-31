@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import DbConnection from "../../interfaces/dbConnectionConfig";
 import useHttpRequest from "../../hooks/useHttpRequest";
@@ -7,7 +7,13 @@ import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Dashboard() {
   const { paramsId } = useParams();
-  const { dbCofigConnection } = useDbConfig();
+  const { dbConfigConnection } = useDbConfig();
+
+  // useEffect(() => {
+  //   if (dbConfigConnection.workspace != paramsId) {
+  //
+  //   }
+  // }, []);
 
   const [text, setText] = useState("");
 
@@ -15,11 +21,11 @@ export default function Dashboard() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      host: dbCofigConnection.host,
-      port: +dbCofigConnection.port,
-      user: dbCofigConnection.user,
-      password: dbCofigConnection.password,
-      dbName: dbCofigConnection.dbName,
+      host: dbConfigConnection.host,
+      port: +dbConfigConnection.port,
+      user: dbConfigConnection.user,
+      password: dbConfigConnection.password,
+      dbName: dbConfigConnection.dbName,
       query: text,
     }),
   });

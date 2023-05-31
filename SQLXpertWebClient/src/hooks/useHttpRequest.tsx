@@ -9,7 +9,7 @@ interface HttpRequestOptions {
 interface HttpResponse<T> {
   data: T | null;
   loading: boolean;
-  error?: Error | null;
+  error?: boolean | null;
   fetchData: any;
 }
 
@@ -19,19 +19,20 @@ function useHttpRequest<T>(
 ): HttpResponse<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<boolean | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
 
     try {
-      const response = await fetch(url, options);
-      const responseData = await response.json();
+    const response = await fetch(url, options);
+    const responseData = await response.json();
 
-      setData(responseData);
-      setLoading(false);
+    setData(responseData);
+    setLoading(false);
+      setError(false)
     } catch (err) {
-      setError(err);
+      setError(true);
       setLoading(false);
     }
   };

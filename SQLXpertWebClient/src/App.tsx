@@ -22,7 +22,7 @@ function App() {
       element: <Connection />,
     },
     {
-      path: "/:database",
+      path: "/database/:paramsId",
       element: <Dashboard />,
     },
   ]);
@@ -43,7 +43,7 @@ function App() {
   }, [themeState]);
 
   // storing database config connection into local storage
-  const { dbCofigConnection, storeDbConfig } = useDbConfig();
+  const { dbConfigConnection, storeDbConfig } = useDbConfig();
   useEffect(() => {
     const data = localStorage.getItem("dbConfigConnection");
     if (data !== null) {
@@ -55,9 +55,9 @@ function App() {
   useEffect(() => {
     localStorage.setItem(
       "dbConfigConnection",
-      JSON.stringify(dbCofigConnection)
+      JSON.stringify(dbConfigConnection)
     );
-  }, [dbCofigConnection]);
+  }, [dbConfigConnection]);
 
   // storing databases into local storage
   const { setDatabasesIntoRedux, databases } = useDatabases();

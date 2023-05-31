@@ -14,7 +14,7 @@ export default function Connection() {
   const [error, setError] = useState({ failed: false, message: "" });
   const navigate = useNavigate();
 
-  const { dbCofigConnection, storeDbConfig } = useDbConfig();
+  const { storeDbConfig } = useDbConfig();
 
   // database config
   const [dbConfigForm, setDbCofigForm] = useState<DbConnection>({
@@ -43,7 +43,7 @@ export default function Connection() {
   const navigateToDashboard = () => {
     const res = data?.connected;
     if (res) {
-      navigate(`/${dbConfigForm.workspace}`, { replace: true });
+      navigate(`/database/${dbConfigForm.workspace}`, { replace: true });
     }
   };
 
@@ -61,14 +61,14 @@ export default function Connection() {
         message: "Please no empty spaces in workspace field.",
       });
 
-    fetchData();
     addNewDatabase(dbConfigForm);
     storeDbConfig(dbConfigForm);
+    fetchData();
   };
 
   useEffect(() => {
     navigateToDashboard();
-  }, [handleOnSubmitEvent]);
+  }, [fetchData]);
 
   return (
     <div>
