@@ -1,23 +1,18 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import DbConnection from "../../interfaces/dbConnectionConfig";
+// import DbConnection from "../../interfaces/dbConnectionConfig";
 import useHttpRequest from "../../hooks/useHttpRequest";
 import { query } from "../../data/endpoints";
 import useDbConfig from "../../hooks/useDbConfig";
+import Table from "./Table";
 
 export default function Dashboard() {
   const { paramsId } = useParams();
   const { dbConfigConnection } = useDbConfig();
 
-  // useEffect(() => {
-  //   if (dbConfigConnection.workspace != paramsId) {
-  //
-  //   }
-  // }, []);
-
   const [text, setText] = useState("");
 
-  const { data, fetchData } = useHttpRequest<DbConnection>(query, {
+  const { data, fetchData } = useHttpRequest<any>(query, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -51,6 +46,13 @@ export default function Dashboard() {
         ></textarea>
         <button type="submit">Submit</button>
       </form>
+
+      {data !== null && !data.failed ? (
+        <Table data={data.data} />
+      ) : (
+        "no columns"
+      )}
+
       <button onClick={() => console.log(data)}>data</button>
     </>
   );
