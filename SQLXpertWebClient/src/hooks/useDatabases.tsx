@@ -12,13 +12,14 @@ export default function useDatabases() {
   };
 
   const addNewDatabase = (db: DbConnection) => {
-    const dbFound = databases.find(
-      (dbRepeated: DbConnection) => dbRepeated.workspace == db.workspace
-    );
-    if (dbFound) {
-      return console.log(dbFound);
-    }
+    // const dbFound = databases.find(
+    //   (dbRepeated: DbConnection) => dbRepeated.workspace == db.workspace
+    // );
+    // if (dbFound) {
+    //   return `Your workspace name already exist!`;
+    // }
     dispatch(setDatabases([...databases, db]));
+    // return "";
   };
 
   return {

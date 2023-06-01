@@ -25,12 +25,12 @@ function useHttpRequest<T>(
     setLoading(true);
 
     try {
-    const response = await fetch(url, options);
-    const responseData = await response.json();
+      const response = await fetch(url, options);
+      const responseData = await response.json();
 
-    setData(responseData);
-    setLoading(false);
-      setError(false)
+      setData(responseData);
+      setLoading(false);
+      setError(false);
     } catch (err) {
       setError(true);
       setLoading(false);

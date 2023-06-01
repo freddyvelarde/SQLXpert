@@ -10,7 +10,7 @@ import { emptySpaceValidation } from "../../utils/stringValidation";
 import useDbConfig from "../../hooks/useDbConfig";
 
 export default function Connection() {
-  const { addNewDatabase } = useDatabases();
+  const { addNewDatabase, databases } = useDatabases();
   const [error, setError] = useState({ failed: false, message: "" });
   const navigate = useNavigate();
 
@@ -61,7 +61,20 @@ export default function Connection() {
         message: "Please no empty spaces in workspace field.",
       });
 
+    const dbFound = databases.find(
+      (dbRepeated: DbConnection) =>
+        dbRepeated.workspace == dbConfigForm.workspace
+    );
+    if (dbFound) {
+      `Your workspace name already exist!`;
+      return setError({
+        failed: true,
+        message: `Your workspace name: "${dbConfigForm.workspace}" already exist!`,
+      });
+    }
+
     addNewDatabase(dbConfigForm);
+
     storeDbConfig(dbConfigForm);
     fetchData();
   };
@@ -69,6 +82,16 @@ export default function Connection() {
   useEffect(() => {
     navigateToDashboard();
   }, [fetchData]);
+
+  const setPreviousDbConfig = (dbConfig: DbConnection) => {
+    // const previousConfig = databases.find(
+    //   (db: DbConnection) => db.workspace === workspaceName
+    // );
+    // if (!previousConfig) return;
+    setDbCofigForm(dbConfig);
+    storeDbConfig(dbConfig);
+    fetchData();
+  };
 
   return (
     <div>
@@ -127,6 +150,12 @@ export default function Connection() {
       <button onClick={() => console.log(data)}>Data config</button>
 
       {error.failed ? <p>{error.message}</p> : ""}
+
+      {databases.map((db) => (
+        <button onClick={() => (db.workspace ? setPreviousDbConfig(db) : null)}>
+          {db.workspace}
+        </button>
+      ))}
     </div>
   );
 }
