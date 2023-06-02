@@ -8,6 +8,7 @@ import useDatabases from "../../hooks/useDatabases";
 import { ConnectionResponse } from "../../interfaces/HttpResponses";
 import { emptySpaceValidation } from "../../utils/stringValidation";
 import useDbConfig from "../../hooks/useDbConfig";
+import Error from "../../components/Error";
 
 export default function Connection() {
   const { addNewDatabase, databases } = useDatabases();
@@ -149,7 +150,7 @@ export default function Connection() {
       </form>
       <button onClick={() => console.log(data)}>Data config</button>
 
-      {error.failed ? <p>{error.message}</p> : ""}
+      {error.failed ? <Error message={error.message} /> : ""}
 
       {databases.map((db) => (
         <button onClick={() => (db.workspace ? setPreviousDbConfig(db) : null)}>

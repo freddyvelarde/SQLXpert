@@ -1,6 +1,6 @@
 {
   "light": {
-    "background": "#CBCBCD",
+    "background": "#CBCBCD ",
     "foreground": "#DDDEE0",
     "button": "#276185",
     "bodyText": "#05070A",
@@ -8,7 +8,7 @@
     "contraBtn": "#CC8460"
   },
   "dark": {
-    "background": "#15162D",
+    "background": "#0e0d12",
     "foreground": "#222539",
     "button": "#5391E4",
     "bodyText": "#D0CCDF",
